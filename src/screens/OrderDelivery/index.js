@@ -1,18 +1,41 @@
-import { useRef, useMemo } from 'react';
-import { View, Text, useWindowDimensions } from 'react-native'
+import { useRef, useMemo, useState, useEffect } from 'react';
+import { View, Text, useWindowDimensions, Alert, ActivityIndicator } from 'react-native'
 import styles from './styles'
 import BottomSheet from '@gorhom/bottom-sheet'
 import orders from '../../../assets/data/orders.json'
 import {FontAwesome5} from '@expo/vector-icons'
 import MapView, {Marker} from 'react-native-maps';
 import {Entypo} from '@expo/vector-icons'
+import * as Location from 'expo-location'
+
 
 const OrderDelivery = () => {
 
+    const [driverLocation, setDriverLocation] = useState(null);
     const order = orders[0];
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(()=>["12%", "95%"], []);
     const {width, height} = useWindowDimensions();
+
+    useEffect(() => {
+        const getDeliveryLocations  = async () => { 
+            let {status} = await Location.requestForegroundPermissionsAsync();
+            if(!status === 'granted') {
+                Alert.alert('You have to allow location permission on your device')
+                return;
+            }
+            let location = await Location.getCurrentPositionAsync();
+            setDriverLocation({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+            }); 
+        }
+        getDeliveryLocations(); 
+    },[])
+
+    if(!driverLocation){
+        return <ActivityIndicator size="large" color="grey" />
+    }
 
     return (
         <View style={styles.page}>
@@ -24,6 +47,12 @@ const OrderDelivery = () => {
                 }} 
                 showsUserLocation
                 followsUserLocation
+                initialRegion={{
+                    latitude: driverLocation.latitude,
+                    longitude: driverLocation.longitude,
+                    latitudeDelta: 0.07,
+                    longitudeDelta: 0.07
+                }}
             >
                 {
                     orders.map((order, i) => (
