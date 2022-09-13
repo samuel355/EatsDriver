@@ -8,6 +8,7 @@ import MapView, {Marker} from 'react-native-maps';
 import {Entypo} from '@expo/vector-icons'
 import * as Location from 'expo-location'
 
+
 const OdersScreen = () => {
 
     const [driverLocation, setDriverLocation] = useState(null);
@@ -15,7 +16,6 @@ const OdersScreen = () => {
     const snapPoints = useMemo(()=>["12%", "95%"], []);
     const {width, height} = useWindowDimensions();
 
-    //const mapAPI = 'AIzaSyDhXXxiYLfwwF2YPV8RFXfZTE0pqedRa6Q';
     useEffect(() => {
         const getDeliveryLocations  = async () => { 
             let {status} = await Location.requestForegroundPermissionsAsync();

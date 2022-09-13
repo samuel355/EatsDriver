@@ -94,4 +94,18 @@ export default styles = StyleSheet.create({
         fontSize: 18,
         letterSpacing: 0.5
     },
+    markerContainer: {
+        backgroundColor: "white", 
+        padding: 5, 
+        borderColor: 'green', 
+        borderWidth: 1, 
+        borderRadius: 20
+    },
+    markerContainerU: {
+        backgroundColor: "orange", 
+        padding: 5, 
+        borderColor: 'orange', 
+        borderWidth: 1, 
+        borderRadius: 20
+    }
 });
