@@ -89,7 +89,7 @@ const OrderDelivery = () => {
                         color="#3FC060"
                         style={styles.navigationIcon}
                     />
-                    <Text style={styles.km}>5km</Text>
+                    <Text style={styles.km}>5km </Text>
                 </View>
 
                 <View style={styles.detailsContainer}>
