@@ -139,7 +139,7 @@ const OrderDelivery = () => {
                 }}
             >
                 {
-                    deliveryStatus ===ORDER_STATUSES.READY_FOR_PICKUP && (
+                    deliveryStatus === ORDER_STATUSES.READY_FOR_PICKUP && (
                         <Pressable 
                             onPress = {()=> navigation.goBack()}
                             style={{paddingTop: 45, paddingLeft: 10,}}>
