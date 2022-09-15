@@ -76,7 +76,7 @@ const OdersScreen = () => {
                 handleIndicatorStyle={styles.btmIndicator}
                 ref={bottomSheetRef} 
                 snapPoints={snapPoints}
-                index={1}
+                //index={1}
             >
                 <View style={styles.container}>
                     <Text style={styles.title}>You are online</Text>
