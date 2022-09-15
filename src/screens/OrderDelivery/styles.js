@@ -80,7 +80,6 @@ export default styles = StyleSheet.create({
         marginTop: 'auto',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'black',
         marginHorizontal: 10,
         borderRadius: 20, 
         marginBottom: 50,
@@ -88,7 +87,6 @@ export default styles = StyleSheet.create({
         paddingHorizontal: 30,
     },
     acceptTitle: {
-        backgroundColor: 'black',
         color: 'white',
 
         fontSize: 18,
