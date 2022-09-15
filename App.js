@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/navigation';
 import {Amplify} from 'aws-amplify'
 import awsconfig from './src/aws-exports'
+import {withAuthenticator} from 'aws-amplify-react-native'
 
 Amplify.configure({
     ...awsconfig, 
@@ -13,7 +14,7 @@ Amplify.configure({
     }
 })
 
-export default function App() {
+function App() {
     return (
         <NavigationContainer>
             <View style={styles.container}>
@@ -31,3 +32,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     }
 });
+
+export default withAuthenticator(App);
