@@ -19,15 +19,13 @@ const ORDER_STATUSES = {
 }
 
 const OrderDelivery = () => {
-    const [order, setOrder] = useState(null)
-    const [user, setUser] = useState(null)
+    const {order, user, dishes, acceptOrder, fetchOrder} = useOrderContext()
     const [driverLocation, setDriverLocation] = useState(null);
     const [totalMinutes, setTotalMinutes] = useState(0);
     const [totalKm, setTotalKm] = useState(0);
     const [deliveryStatus, setDeliveryStatus] = useState(ORDER_STATUSES.READY_FOR_PICKUP);
     const [isDriverClose, setIsDriverClose] = useState(false);
-    const [dishItems, setDishItems] = useState([]);
-    const {acceptOrder} = useOrderContext()
+
 
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(()=>["12%", "95%"], []);
@@ -38,23 +36,8 @@ const OrderDelivery = () => {
     const mapRef = useRef(null)
 
     useEffect(() => {
-        if(!id){
-            return;
-        }
-        DataStore.query(Order, id)
-        .then(setOrder)
+        fetchOrder(id)
     }, [id]);
-
-    useEffect(() => {
-        if(!order){
-            return;
-        }
-        DataStore.query(User, order.userID)
-        .then(setUser);
-
-        DataStore.query(OrderDish, (od) => od.orderID('eq', order.id))
-        .then(setDishItems)
-    }, [order]);
 
     useEffect(() => {
         const getDeliveryLocations  = async () => { 
@@ -203,8 +186,8 @@ const OrderDelivery = () => {
 
                 <Marker
                     coordinate={deliveryLocation}
-                    title={user.name}
-                    description={user.address}
+                    title={order?.user?.name}
+                    description={order?.user?.address}
                 >
                     <View style={styles.markerContainer}>
                         <Entypo name='user' size={30} color='green' />
@@ -234,14 +217,14 @@ const OrderDelivery = () => {
                     <Text style={styles.resAddress}>{order.Restaurant.address}</Text>
 
                     <Text style={styles.userTitle}>Customer Details</Text>
-                    <Text style={styles.userName}>Name: {user.name}</Text>
-                    <Text style={styles.userAddress}>Address: {user.address}</Text>
+                    <Text style={styles.userName}>Name: {user?.name}</Text>
+                    <Text style={styles.userAddress}>Address: {user?.address}</Text>
 
                     <View style={styles.oderItemsContainer}>
                         <Text style={styles.itemsHeading}>Items Ordered</Text>
                         {
-                            dishItems.map((dishItem) => (
-                                <Text key={dishItem.id} style={styles.orderItem}>{dishItem.Dish.name} x{dishItem.quantity}</Text>
+                            dishes?.map((dish) => (
+                                <Text key={dish.id} style={styles.order}>{dish.Dish.name} x{dish.quantity}</Text>
                             ))
                         }
                     </View>
@@ -249,7 +232,7 @@ const OrderDelivery = () => {
                 <Pressable 
                     onPress={onButtonPressed}
                     style={{...styles.acceptBtn, backgroundColor: isButtonDisabled() ? 'grey': 'black'} }
-                    //disabled={isButtonDisabled}
+                    disabled={isButtonDisabled()}
                 >
                     <Text style={styles.acceptTitle}>{renderButtonTitle()}</Text>
                 </Pressable>

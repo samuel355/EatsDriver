@@ -1,12 +1,14 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { DataStore } from "aws-amplify";
-import { Order, OrderDish, Basket } from "../models";
+import { Order, OrderDish, Basket, User } from "../models";
 import { useAuthContext } from "./AuthContext";
 import { useBasketContext } from "./BasketContext";
 
 const OrderContext = createContext({});
 
 const OrderContextProvider = ({ children }) => {
+  const [user, setUser] = useState();
+  const [dishes, setDishes] = useState();
   const { dbUser, dbCourier } = useAuthContext();
   const { restaurant, totalPrice, basketDishes, basket } = useBasketContext();
 
@@ -56,19 +58,35 @@ const OrderContextProvider = ({ children }) => {
     return { ...order, dishes: orderDishes };
   };
 
-  acceptOrder = (order) => {
+  const fetchOrder = async (id) => {
+    if (!id) {
+      setOrder(null);
+      return;
+    }
+    const fetchedOrder = await DataStore.query(Order, id);
+    setOrder(fetchedOrder);
+
+    DataStore.query(User, fetchedOrder.userID).then(setUser);
+
+    DataStore.query(OrderDish, (od) => od.orderID("eq", fetchedOrder.id)).then(
+      setDishes
+    );
+  };
+
+  const acceptOrder = (order) => {
     //update the order and change status  
     DataStore.save(
       Order.copyOf(order, (updated) =>{
         updated.status = "ACCEPTED";
         updated.Courier = dbCourier;
       })
-    ).then(setActiveOrder)
+    ).then(setOrder)
     //Assign the driver to the order
   }
 
+
   return (
-    <OrderContext.Provider value={{ createOrder, orders, getOrder, acceptOrder }}>
+    <OrderContext.Provider value={{ createOrder, orders, user, dishes, getOrder, fetchOrder, acceptOrder, order }}>
       {children}
     </OrderContext.Provider>
   );
