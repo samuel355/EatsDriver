@@ -72,7 +72,7 @@ const OrderContextProvider = ({ children }) => {
       setDishes
     );
   };
-  
+
   const acceptOrder = () => {
     // update the order, and change status, and assign the courier
     DataStore.save(
@@ -102,7 +102,7 @@ const OrderContextProvider = ({ children }) => {
   };
 
   return (
-    <OrderContext.Provider value={{ createOrder, orders, user, dishes, getOrder, fetchOrder, acceptOrder, order }}>
+    <OrderContext.Provider value={{ createOrder, orders, user, dishes, getOrder, fetchOrder, acceptOrder, order, pickUpOrder, completeOrder }}>
       {children}
     </OrderContext.Provider>
   );

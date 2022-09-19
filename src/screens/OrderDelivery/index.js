@@ -17,7 +17,7 @@ import { useOrderContext } from '../../contexts/OrderContext';
 // }
 
 const OrderDelivery = () => {
-    const {order, user, dishes, acceptOrder, fetchOrder} = useOrderContext()
+    const {order, user, dishes, acceptOrder, fetchOrder, pickUpOrder, completeOrder} = useOrderContext()
     const [driverLocation, setDriverLocation] = useState(null);
     const [totalMinutes, setTotalMinutes] = useState(0);
     const [totalKm, setTotalKm] = useState(0);
