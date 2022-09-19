@@ -10,6 +10,7 @@ import MapViewDirections from 'react-native-maps-directions'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {DataStore} from 'aws-amplify'
 import {Order, OrderDish, User} from '../../models'
+import { useOrderContext } from '../../contexts/OrderContext';
 
 const ORDER_STATUSES = {
     READY_FOR_PICKUP: 'READY_FOR_PICKUP',
@@ -26,6 +27,7 @@ const OrderDelivery = () => {
     const [deliveryStatus, setDeliveryStatus] = useState(ORDER_STATUSES.READY_FOR_PICKUP);
     const [isDriverClose, setIsDriverClose] = useState(false);
     const [dishItems, setDishItems] = useState([]);
+    const {acceptOrder} = useOrderContext()
 
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(()=>["12%", "95%"], []);
@@ -93,6 +95,7 @@ const OrderDelivery = () => {
                 longitudeDelta: 0.01
             });
             setDeliveryStatus(ORDER_STATUSES.ACCEPTED)
+            acceptOrder(order)
         }
         if(deliveryStatus === ORDER_STATUSES.ACCEPTED){
             setDeliveryStatus(ORDER_STATUSES.PICKED_UP)
@@ -167,7 +170,6 @@ const OrderDelivery = () => {
                         </Pressable>
                     )
                 }
-                
                 
                 <MapViewDirections 
                     origin={driverLocation}

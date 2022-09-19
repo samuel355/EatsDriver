@@ -7,10 +7,11 @@ import { useBasketContext } from "./BasketContext";
 const OrderContext = createContext({});
 
 const OrderContextProvider = ({ children }) => {
-  const { dbUser } = useAuthContext();
+  const { dbUser, dbCourier } = useAuthContext();
   const { restaurant, totalPrice, basketDishes, basket } = useBasketContext();
 
   const [orders, setOrders] = useState([]);
+  const [activeOrder, setActiveOrder] = useState();
 
   useEffect(() => {
     DataStore.query(Order, (o) => o.userID("eq", dbUser.id)).then(setOrders);
@@ -55,8 +56,19 @@ const OrderContextProvider = ({ children }) => {
     return { ...order, dishes: orderDishes };
   };
 
+  acceptOrder = (order) => {
+    //update the order and change status  
+    DataStore.save(
+      Order.copyOf(order, (updated) =>{
+        updated.status = "ACCEPTED";
+        updated.Courier = dbCourier;
+      })
+    ).then(setActiveOrder)
+    //Assign the driver to the order
+  }
+
   return (
-    <OrderContext.Provider value={{ createOrder, orders, getOrder }}>
+    <OrderContext.Provider value={{ createOrder, orders, getOrder, acceptOrder }}>
       {children}
     </OrderContext.Provider>
   );

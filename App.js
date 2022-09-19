@@ -7,6 +7,8 @@ import {Amplify} from 'aws-amplify'
 import awsconfig from './src/aws-exports'
 import {withAuthenticator} from 'aws-amplify-react-native'
 import AuthContextProvider from './src/contexts/AuthContext'
+import OrderContextProvider from './src/contexts/OrderContext'
+
 
 Amplify.configure({
     ...awsconfig, 
@@ -19,10 +21,12 @@ function App() {
     return (
         <NavigationContainer>
             <AuthContextProvider>
-                <View style={styles.container}>
-                    <Navigation />
-                    <StatusBar style="auto" />
-                </View>
+                <OrderContextProvider>
+                    <View style={styles.container}>
+                        <Navigation />
+                        <StatusBar style="auto" />
+                    </View>
+                </OrderContextProvider>
             </AuthContextProvider>
         </NavigationContainer>
     );
