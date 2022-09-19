@@ -11,7 +11,7 @@ const OrderContextProvider = ({ children }) => {
   const { restaurant, totalPrice, basketDishes, basket } = useBasketContext();
 
   const [orders, setOrders] = useState([]);
-  const [activeOrder, setActiveOrder] = useState();
+  const [order, setOrder] = useState();
 
   useEffect(() => {
     DataStore.query(Order, (o) => o.userID("eq", dbUser.id)).then(setOrders);
