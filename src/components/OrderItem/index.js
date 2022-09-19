@@ -17,8 +17,8 @@ const OrderItem = ({order}) => {
                     <Text style={styles.restAddress}>Address: {order.Restaurant.address}</Text>
 
                     <Text style={styles.deliveryDetails}>Delivery Details: </Text>
-                    <Text style={styles.userName}>Name: {order.User.name}</Text>
-                    <Text style={styles.userAddress}>Address: {order.User.address}</Text>
+                    <Text style={styles.userName}>Name: {order.User?.name}</Text>
+                    <Text style={styles.userAddress}>Address: {order.User?.address}</Text>
                 </View>
                 <View style={styles.logoContainer}>
                     <Entypo style={styles.entypo} name="check" size={24} color="white" />

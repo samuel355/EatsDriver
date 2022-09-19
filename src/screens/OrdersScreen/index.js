@@ -1,16 +1,17 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { Text, View, FlatList, useWindowDimensions, ActivityIndicator } from 'react-native';
-import orders from '../../../assets/data/orders.json'
 import styles from './styles'
 import BottomSheet from '@gorhom/bottom-sheet'
 import OrderItem from '../../components/OrderItem';
 import MapView, {Marker} from 'react-native-maps';
 import {Entypo} from '@expo/vector-icons'
+import {DataStore} from 'aws-amplify'
+import {Order} from '../../models'
 import * as Location from 'expo-location'
-
 
 const OdersScreen = () => {
 
+    const [orders, setOrders] = useState([]); 
     const [driverLocation, setDriverLocation] = useState(null);
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(()=>["12%", "95%"], []);
@@ -30,6 +31,11 @@ const OdersScreen = () => {
             }); 
         }
         getDeliveryLocations(); 
+    },[])
+
+    useEffect(() => {
+        DataStore.query(Order)
+        .then(setOrders)
     },[])
 
     if(!driverLocation){
@@ -83,7 +89,8 @@ const OdersScreen = () => {
                     <Text style={styles.subTitle}>Available Orders: <Text style={styles.count}> {orders.length}</Text></Text>
                 </View>
 
-                <FlatList style={{marginTop: -90,}}
+                <FlatList 
+                    style={{marginTop: 25,}}
                     data={orders}
                     renderItem={({item}) => <OrderItem order={item} />}
                 />

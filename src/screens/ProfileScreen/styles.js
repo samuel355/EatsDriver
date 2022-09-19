@@ -18,4 +18,34 @@ export default styles = StyleSheet.create({
         color: "red",
         marginTop: 10,
     },
+    iconsContainer: {
+        flexDirection: 'row',
+    },
+    btnContainer:{
+        backgroundColor: "green",
+        marginTop: 20,
+        marginHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 30,
+    },
+    btn: {
+        color: 'white',
+        fontWeight: '500',
+        letterSpacing: 0.4
+    },
+    carIcon: {
+        padding: 10,
+        margin: 10,
+        borderWidth: 1,
+        borderColor: 'green',
+        borderRadius: 40,
+        backgroundColor: 'white',
+    },
+    bicycleIcon: {
+        padding: 10,
+        margin: 10,
+        borderWidth: 1,
+        borderColor: 'green',
+        borderRadius: 40,
+    },
 });
