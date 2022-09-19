@@ -72,18 +72,34 @@ const OrderContextProvider = ({ children }) => {
       setDishes
     );
   };
-
-  const acceptOrder = (order) => {
-    //update the order and change status  
+  
+  const acceptOrder = () => {
+    // update the order, and change status, and assign the courier
     DataStore.save(
-      Order.copyOf(order, (updated) =>{
+      Order.copyOf(order, (updated) => {
         updated.status = "ACCEPTED";
         updated.Courier = dbCourier;
       })
-    ).then(setOrder)
-    //Assign the driver to the order
-  }
+    ).then(setOrder);
+  };
 
+  const pickUpOrder = () => {
+    // update the order, and change status, and assign the courier
+    DataStore.save(
+      Order.copyOf(order, (updated) => {
+        updated.status = "PICKED_UP";
+      })
+    ).then(setOrder);
+  };
+
+  const completeOrder = () => {
+    // update the order, and change status, and assign the courier
+    DataStore.save(
+      Order.copyOf(order, (updated) => {
+        updated.status = "COMPLETED";
+      })
+    ).then(setOrder);
+  };
 
   return (
     <OrderContext.Provider value={{ createOrder, orders, user, dishes, getOrder, fetchOrder, acceptOrder, order }}>
