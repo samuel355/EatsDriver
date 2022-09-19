@@ -1,7 +1,7 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { View, Text, useWindowDimensions, Alert, ActivityIndicator, Pressable } from 'react-native'
 import styles from './styles'
-import BottomSheet from '@gorhom/bottom-sheet'
+import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet'
 import {FontAwesome5, Ionicons} from '@expo/vector-icons'
 import MapView, {Marker} from 'react-native-maps';
 import {Entypo} from '@expo/vector-icons'
@@ -9,7 +9,7 @@ import * as Location from 'expo-location'
 import MapViewDirections from 'react-native-maps-directions'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {DataStore} from 'aws-amplify'
-import {Order, User} from '../../models'
+import {Order, OrderDish, User} from '../../models'
 
 const ORDER_STATUSES = {
     READY_FOR_PICKUP: 'READY_FOR_PICKUP',
@@ -25,6 +25,7 @@ const OrderDelivery = () => {
     const [totalKm, setTotalKm] = useState(0);
     const [deliveryStatus, setDeliveryStatus] = useState(ORDER_STATUSES.READY_FOR_PICKUP);
     const [isDriverClose, setIsDriverClose] = useState(false);
+    const [dishItems, setDishItems] = useState([]);
 
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(()=>["12%", "95%"], []);
@@ -47,7 +48,10 @@ const OrderDelivery = () => {
             return;
         }
         DataStore.query(User, order.userID)
-        .then(setUser)
+        .then(setUser);
+
+        DataStore.query(OrderDish, (od) => od.orderID('eq', order.id))
+        .then(setDishItems)
     }, [order]);
 
     useEffect(() => {
@@ -233,10 +237,11 @@ const OrderDelivery = () => {
 
                     <View style={styles.oderItemsContainer}>
                         <Text style={styles.itemsHeading}>Items Ordered</Text>
-                        <Text style={styles.orderItem}>Onion Rings x1 </Text>
-                        <Text style={styles.orderItem}>Big Mac  x3 </Text>
-                        <Text style={styles.orderItem}>Big Tasty x1 </Text>
-                        <Text style={styles.orderItem}>Cocacola x1 </Text>
+                        {
+                            dishItems.map((dishItem) => (
+                                <Text key={dishItem.id} style={styles.orderItem}>{dishItem.Dish.name} x{dishItem.quantity}</Text>
+                            ))
+                        }
                     </View>
                 </View>
                 <Pressable 
