@@ -1,7 +1,7 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
-import { Text, View, FlatList, useWindowDimensions, ActivityIndicator } from 'react-native';
+import { Text, View, useWindowDimensions, ActivityIndicator } from 'react-native';
 import styles from './styles'
-import BottomSheet from '@gorhom/bottom-sheet'
+import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet'
 import OrderItem from '../../components/OrderItem';
 import MapView, {Marker} from 'react-native-maps';
 import {Entypo} from '@expo/vector-icons'
@@ -34,7 +34,7 @@ const OdersScreen = () => {
     },[])
 
     useEffect(() => {
-        DataStore.query(Order)
+        DataStore.query(Order, (order)=> order.status('eq', 'READY_FOR_PICKUP'))
         .then(setOrders)
     },[])
 
@@ -89,7 +89,7 @@ const OdersScreen = () => {
                     <Text style={styles.subTitle}>Available Orders: <Text style={styles.count}> {orders.length}</Text></Text>
                 </View>
 
-                <FlatList 
+                <BottomSheetFlatList 
                     style={{marginTop: 25,}}
                     data={orders}
                     renderItem={({item}) => <OrderItem order={item} />}

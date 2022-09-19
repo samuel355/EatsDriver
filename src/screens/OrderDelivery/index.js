@@ -2,15 +2,14 @@ import { useRef, useMemo, useState, useEffect } from 'react';
 import { View, Text, useWindowDimensions, Alert, ActivityIndicator, Pressable } from 'react-native'
 import styles from './styles'
 import BottomSheet from '@gorhom/bottom-sheet'
-import orders from '../../../assets/data/orders.json'
 import {FontAwesome5, Ionicons} from '@expo/vector-icons'
 import MapView, {Marker} from 'react-native-maps';
 import {Entypo} from '@expo/vector-icons'
 import * as Location from 'expo-location'
 import MapViewDirections from 'react-native-maps-directions'
-import { useNavigation } from '@react-navigation/native';
-
-const order = orders[0];
+import { useNavigation, useRoute } from '@react-navigation/native';
+import {DataStore} from 'aws-amplify'
+import {Order, User} from '../../models'
 
 const ORDER_STATUSES = {
     READY_FOR_PICKUP: 'READY_FOR_PICKUP',
@@ -18,30 +17,38 @@ const ORDER_STATUSES = {
     PICKED_UP: 'PICKED_UP', 
 }
 
-const restaurantLocation = {
-    latitude: order.Restaurant.lat, 
-    longitude: order.Restaurant.lng
-} 
-const deliveryLocation = {
-    latitude: order.User.lat, 
-    longitude: order.User.lng,
-}
-
 const OrderDelivery = () => {
-
+    const [order, setOrder] = useState(null)
+    const [user, setUser] = useState(null)
     const [driverLocation, setDriverLocation] = useState(null);
     const [totalMinutes, setTotalMinutes] = useState(0);
     const [totalKm, setTotalKm] = useState(0);
     const [deliveryStatus, setDeliveryStatus] = useState(ORDER_STATUSES.READY_FOR_PICKUP);
     const [isDriverClose, setIsDriverClose] = useState(false);
 
-
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(()=>["12%", "95%"], []);
     const {width, height} = useWindowDimensions();
     const navigation = useNavigation();
-
+    const route = useRoute();
+    const id = route.params?.id;
     const mapRef = useRef(null)
+
+    useEffect(() => {
+        if(!id){
+            return;
+        }
+        DataStore.query(Order, id)
+        .then(setOrder)
+    }, [id]);
+
+    useEffect(() => {
+        if(!order){
+            return;
+        }
+        DataStore.query(User, order.userID)
+        .then(setUser)
+    }, [order]);
 
     useEffect(() => {
         const getDeliveryLocations  = async () => { 
@@ -71,10 +78,6 @@ const OrderDelivery = () => {
         //Prevent always rerunning
         foregroundSubscription;
     },[])
-
-    if(!driverLocation){
-        return <ActivityIndicator size="large" color="grey" />
-    }
 
     const onButtonPressed = () => {
         if(deliveryStatus === ORDER_STATUSES.READY_FOR_PICKUP){
@@ -119,6 +122,19 @@ const OrderDelivery = () => {
         }
         return true;
     };
+
+    const restaurantLocation = {
+        latitude: order?.Restaurant?.lat, 
+        longitude: order?.Restaurant?.lng
+    } 
+    const deliveryLocation = {
+        latitude: user?.lat, 
+        longitude: user?.lng,
+    }
+
+    if(!order || !user || !driverLocation){
+        return <ActivityIndicator size="large" color="grey" />
+    }
 
     return (
         <View style={styles.page}>
@@ -181,8 +197,8 @@ const OrderDelivery = () => {
 
                 <Marker
                     coordinate={deliveryLocation}
-                    title={order.User.name}
-                    description={order.User.address}
+                    title={user.name}
+                    description={user.address}
                 >
                     <View style={styles.markerContainer}>
                         <Entypo name='user' size={30} color='green' />
@@ -212,8 +228,8 @@ const OrderDelivery = () => {
                     <Text style={styles.resAddress}>{order.Restaurant.address}</Text>
 
                     <Text style={styles.userTitle}>Customer Details</Text>
-                    <Text style={styles.userName}>Name: {order.User.name}</Text>
-                    <Text style={styles.userAddress}>Address: {order.User.address}</Text>
+                    <Text style={styles.userName}>Name: {user.name}</Text>
+                    <Text style={styles.userAddress}>Address: {user.address}</Text>
 
                     <View style={styles.oderItemsContainer}>
                         <Text style={styles.itemsHeading}>Items Ordered</Text>
